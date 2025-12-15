@@ -1,0 +1,19 @@
+<svg width="400" height="600" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="600" fill="#f3f4f6"/>
+  
+  <!-- Icon background circle -->
+  <circle cx="200" cy="250" r="80" fill="#e5e7eb"/>
+  
+  <!-- Image icon -->
+  <path d="M 160 230 L 160 270 L 240 270 L 240 230 Z M 170 240 L 170 260 L 230 260 L 190 220 Z" fill="#9ca3af"/>
+  <circle cx="220" cy="245" r="8" fill="#9ca3af"/>
+  
+  <!-- Text -->
+  <text x="200" y="350" font-family="Arial, sans-serif" font-size="20" fill="#6b7280" text-anchor="middle" font-weight="bold">
+    No Image Available
+  </text>
+  <text x="200" y="380" font-family="Arial, sans-serif" font-size="14" fill="#9ca3af" text-anchor="middle">
+    Cover image not found
+  </text>
+</svg>

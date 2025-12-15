@@ -1,0 +1,50 @@
+// Remaining helper functions to add to route.ts
+
+// Helper: Calculate person connections
+function calculatePersonConnections(items: Item[]) {
+  const personFrequency: Record<string, number> = {};
+  
+  items.forEach((item) => {
+    const metadata = item.metadata;
+    if (!metadata) return;
+    
+    const directors = metadata.director || metadata.directors;
+    if (directors) {
+      const directorList = Array.isArray(directors) ? directors : [directors];
+      directorList.forEach((director: any) => {
+        const name = String(director);
+        personFrequency[name] = (personFrequency[name] || 0) + 1;
+      });
+    }
+    
+    const actors = metadata.mainActors || metadata.mainActor || metadata.actor || metadata.actors;
+    if (actors) {
+      const actorList = Array.isArray(actors) ? actors : [actors];
+      actorList.forEach((actor: any) => {
+        const name = String(actor);
+        personFrequency[name] = (personFrequency[name] || 0) + 1;
+      });
+    }
+    
+    const authors = metadata.author || metadata.authors;
+    if (authors) {
+      const authorList = Array.isArray(authors) ? authors : [authors];
+      authorList.forEach((author: any) => {
+        const name = String(author);
+        personFrequency[name] = (personFrequency[name] || 0) + 1;
+      });
+    }
+  });
+  
+  const topPeople = Object.entries(personFrequency)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 20)
+    .map(([name, count]) => ({ name, count }));
+  
+  return {
+    topPeople,
+    totalUniquePeople: Object.keys(personFrequency).length,
+  };
+}
+
+// Rest of functions...

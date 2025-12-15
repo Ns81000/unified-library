@@ -1,0 +1,61 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: media-library-postgres
+    environment:
+      POSTGRES_USER: mediauser
+      POSTGRES_PASSWORD: mediapass
+      POSTGRES_DB: media_library
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mediauser -d media_library"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: media-library-chromadb
+    volumes:
+      - chroma-data:/data
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  next-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: media-library-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      chromadb:
+        condition: service_started
+    # CRITICAL: Add host.docker.internal DNS entry for Linux containers
+    # This allows the container to reach services on the Windows host (like Ollama)
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      DATABASE_URL: "postgresql://mediauser:mediapass@postgres:5432/media_library?schema=public"
+      CHROMADB_URL: "http://chromadb:8000"
+      OLLAMA_URL: "http://host.docker.internal:11434"
+      OLLAMA_EMBEDDING_MODEL: "embeddinggemma:300m"
+      GOOGLE_GEMINI_API_KEY: ${GOOGLE_GEMINI_API_KEY}
+      NODE_ENV: production
+    volumes:
+      - ./media-storage:/app/media-storage
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
+
+volumes:
+  postgres-data:
+  chroma-data:

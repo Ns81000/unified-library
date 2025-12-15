@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ItemType {
+  MOVIE
+  SERIES
+  ANIME
+  BOOK
+  GAME
+  COMIC
+  MANGA
+  PERSON
+  FRANCHISE
+  PORNSTAR
+  DONGHUA
+  MANHWA
+  MANHUA
+  HENTAI
+  AENI
+  ANIMATION
+  WEBTOON
+}
+
+model Item {
+  id          String    @id @default(uuid())
+  title       String
+  type        ItemType
+  coverImage  String?   // Local file path (e.g., /media/covers/[id].webp) or null
+  synopsis    String    @db.Text
+  keywords    String[]  @default([])
+  notes       String?   @db.Text
+  metadata    Json      // Type-specific fields stored as JSONB
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([type])
+  @@index([title])
+  @@index([createdAt])
+}
